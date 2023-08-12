@@ -2,21 +2,30 @@ name: Kneav Exam
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-    build:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v3
-       - name: Set up Node.js
-         uses: actions/setup-node@v3
-         with:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
           node-version: 14.x
           cache: npm
-       - name: NPM INSTALL
-         run: npm install
-       - name: UNIT Tests
-         run: 'npm run test:unit'
+      - name: NPM INSTALL
+        run: npm install
+      - name: UNIT Tests
+        run: "npm run test:unit"
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: "${{ secrets.Exam_SERVICE_ID }}"
+          api-key: "${{ secrets.Exam_API_KEY }}"
